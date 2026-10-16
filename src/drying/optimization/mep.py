@@ -153,7 +153,7 @@ def solve(cfg: MepConfig) -> MepResult:
         etas = _unflatten(x0, cfg.m)
 
         # [Step 3] Increase beta: transition from convex to original cost
-        beta *= cfg.beta_growth
+        beta += cfg.beta_growth
 
     # --- After the loop: pick the optimal path from the final distribution ---
     costs = _evaluate(paths, etas, cfg)
