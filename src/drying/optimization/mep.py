@@ -19,11 +19,11 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 import numpy as np
-from scipy.optimize import minimize
 
 from ..model.cost import ControlParams, path_cost
 from ..model.paths import Path, enumerate_paths
 from .gibbs import free_energy, gibbs_probs
+from .solver import solve_inner
 
 
 @dataclass(frozen=True)
@@ -138,12 +138,13 @@ def solve(cfg: MepConfig) -> MepResult:
             est = _unflatten(x, cfg.m)
             return free_energy(beta, _evaluate(paths, est, cfg))
 
-        res = minimize(
+        res = solve_inner(
             obj,
             x0,
-            method=cfg.solver,
             bounds=bounds,
-            options={"maxiter": 300, "ftol": 1e-10},
+            method=cfg.solver,
+            maxiter=300,
+            ftol=1e-10,
         )
         if not res.success:
             # TODO: log solver failures -- use the result and continue for now
@@ -152,8 +153,12 @@ def solve(cfg: MepConfig) -> MepResult:
         x0 = res.x
         etas = _unflatten(x0, cfg.m)
 
-        # [Step 3] Increase beta: transition from convex to original cost
-        beta += cfg.beta_growth
+        # [Step 3] Increase beta by the growth factor zeta (Algorithm 1,
+        #          "beta <- zeta * beta").  Multiplicative growth traces the
+        #          homotopy from the convex (beta ~ 0) to the non-convex
+        #          (large beta) objective; linear (+=) growth would skip the
+        #          low-beta convex phase entirely.
+        beta *= cfg.beta_growth
 
     # --- After the loop: pick the optimal path from the final distribution ---
     costs = _evaluate(paths, etas, cfg)

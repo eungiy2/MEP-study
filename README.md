@@ -51,5 +51,12 @@ uv run python experiments/alpha_effect.py
 
 - [x] `docs/pseudocode.md` -- algorithm pseudo-code notes
 - [x] Skeleton structure / model pure-function scaffolding
+- [x] `docs/pseudocode.md` -- recorded an **erratum in paper Eq. (11)**: the
+      printed `K0` coefficient set is inconsistent with the source drying data
+      (Malvandi et al. 2022, ref [5]) in any temperature unit. Verified against
+      the experiments: `K1`/`M0`/`M1` are correct **in Kelvin** with
+      `M_eq / 10000`; `K0` must be re-fitted as
+      `(0.07449 T^2 - 45.0799 T + 6846.657)/1000`. See `docs/pseudocode.md` §2.1.
+- [ ] Apply the corrected `K0` coefficients in `constants.py` (re-fit from ref [5])
 - [ ] Tune the inner constrained optimization (solver / bounds / scaling)
 - [ ] Verify reproduction of paper Figs. 4/5/6

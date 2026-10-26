@@ -37,15 +37,50 @@ beta         : MEP Lagrange multiplier (starts small, increases gradually)
 ### 2.1 Lewis constant and equilibrium moisture content — Eq. (11), (12)
 
 ```
-# T is in Kelvin
+# **Temperature units -- see erratum note below (important!)**
 function K(gamma, T):                       # Lewis constant
-    if gamma == 0:  return ( 0.074493*T^2 - 45.5058*T + 6839.9) / 1000
-    else:           return (-0.05811*T^2  + 39.962*T  - 6680.1) / 1000
+    if gamma == 0:  return ( 0.07449*T^2 - 45.0799*T + 6846.657) / 1000   # HA, T in Kelvin
+    else:           return (-0.05811*T^2  + 39.962*T  - 6680.1) / 1000    # HA/US, T in Kelvin
 
 function M_eq(gamma, T):                    # equilibrium dry-basis moisture content
-    if gamma == 0:  return ( 0.2479*T^2 - 172.09*T + 30133) / 10000
-    else:           return ( 0.1468*T^2 - 107.27*T + 19720) / 10000
+    if gamma == 0:  return ( 0.2479*T^2 - 172.09*T + 30133) / 10000       # HA, T in Kelvin
+    else:           return ( 0.1468*T^2 - 107.27*T + 19720) / 10000       # HA/US, T in Kelvin
 ```
+
+> ### ⚠️ Erratum note — K0 coefficients (Eq. 11)
+>
+> The paper prints `K0 = (0.074493 T^2 - 45.5058 T + 6839.9)/1000` annotated *"T in
+> Kelvin"*. Reproducing this literally is **impossible**: the polynomial is
+> negative over the whole admissible range [30, 70] °C when T is in Kelvin
+> (it only turns positive above ~70.6 °C), and gives ~5.7/4.8/4.0 1/min when
+> T is in Celsius — either way it does **not** match the experimental drying
+> data it is supposed to encode.
+>
+> Cross-checking against the source of the drying curves, Malvandi et al.
+> (*Ultrasonics Sonochemistry* 85 (2022) 105982, ref [5]), the fitted Lewis
+> constants k and equilibrium moistures at 25/50/70 °C are:
+>
+> | T | HA k (exp) | HA/US k (exp) | HA Meq | HA/US Meq |
+> |---|-----------|---------------|--------|-----------|
+> | 25 °C | 0.02805 | 0.06791 | 8.1% | 7.3% |
+> | 50 °C | 0.05812 | 0.16475 | 4.2% | 3.7% |
+> | 70 °C | 0.14922 | 0.18992 | 2.7% | 1.9% |
+>
+> The paper's K1 and M0/M1 evaluated **in Kelvin** agree with this table to
+> ~2-3% (so "Tk in Kelvin" is right for those, and M_eq / 10000 is correct,
+> not / 1000). Only **K0 does not fit in any unit**. Re-fitting K0 through
+> the experimental table points gives the coefficients used above,
+>
+> ```
+> K0(Tk) = (0.07449 Tk^2 - 45.0799 Tk + 6846.657)/1000        (Tk in Kelvin)
+> ```
+>
+> which reproduces k = 0.028/0.058/0.149 exactly. This is treated as a
+> **transcription error in the published Eq. (11)** (the leading coefficient
+> 0.07449 vs the printed 0.074493 is nearly identical, suggesting the same
+> fit was printed with mis-transcribed linear/constant terms). The current
+> code (`constants.py` / `kinetics.py`) should be updated to these
+> coefficients; see README status.
 
 ### 2.2 Drying dynamics — Eq. (11), (13)
 
@@ -69,6 +104,13 @@ function moisture_update(gamma, x, eta):                        # Eq. (11)
 > Note: the fraction layout of the two-line formulas in the PDF is ambiguous, so this
 > is reconstructed from the Lewis model solution (Ref. [5], [13]).
 > Cross-check against Eqs. (11)-(13) of the original paper.
+>
+> Numerical note: the `t_star` formulation above (Eq. 13) inverts the current
+> state into an "equivalent elapsed time". During optimization the moisture can
+> reach its equilibrium M (or below), which makes the log argument
+> non-positive and the update NaN. The implementation uses the algebraically
+> identical closed form `X(t) = M + (X_0 - M) exp(-K t)` (moisture simply
+> stops decreasing at equilibrium), which is valid for all X_0 >= 0.
 
 ### 2.3 Energy cost — Eq. (15)~(17)
 
