@@ -39,12 +39,8 @@ def K(gamma, T):
     evaluated in Celsius (see module docstring for why); gamma == 1 (HA/US)
     in Kelvin, per Eq. (11).
     """
-    if gamma == 0:
-        T_eval = T - 273.15            # K0 coefficients are fitted in Celsius
-    else:
-        T_eval = T                     # K1 coefficients are fitted in Kelvin
-    return (K_COEFF[gamma][0] * T_eval ** 2
-            + K_COEFF[gamma][1] * T_eval
+    return (K_COEFF[gamma][0] * T ** 2
+            + K_COEFF[gamma][1] * T
             + K_COEFF[gamma][2]) / 1000
 
 
@@ -64,10 +60,6 @@ def t_star(gamma, T, x, t):
     """Equivalent (elapsed) time t* given current wet-basis x and added t (Eq. 13)."""
     M_val = M_eq(gamma, T)
     K_val = K(gamma, T)
-    # C-Eq. (13) is derived from the Lewis solution by inverting the elapsed
-    # time, and is only valid while the current content X is above equilibrium
-    # M.  Clamp the argument so X <= M (already at/under equilibrium) maps to
-    # t* -> +inf instead of a log of a non-positive number.
     arg = (X0_DRY_INIT - M_val) / max(_dry_basis(x) - M_val, np.finfo(float).eps)
     return 1.0 / K_val * np.log(arg) + t
 

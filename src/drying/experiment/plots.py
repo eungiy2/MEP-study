@@ -44,7 +44,7 @@ def plot_cost_vs_alpha(results: list[MepResult], alphas: list[float], outdir: st
 
 
 def plot_temperature_profile(result: MepResult, outdir: str | Path = "outputs") -> None:
-    """Fig. 4(e) -- temperature profile of the optimal sequence"""
+    """Fig. 4(a)-(d) -- temperature profile of the optimal sequence"""
     etas = result.etas
     t_ticks = [0.0]
     for e in etas:
@@ -55,10 +55,10 @@ def plot_temperature_profile(result: MepResult, outdir: str | Path = "outputs") 
     ax.step(t_ticks, temps, where="post")
     ax.set_xlabel("time [min]")
     ax.set_ylabel("air temperature [°C]")
-    ax.set_ylim(20, 80)
-    ax.set_title(f"optimal path: {'->'.join(map(str, result.path))}")
+    ax.set_ylim(20, 90)
+    ax.set_title(f"M={len(etas)}  optimal path: {'->'.join(map(str, result.path))}")
     ax.grid(alpha=0.3)
-    _save(fig, "fig4e_temperature_profile", outdir)
+    _save(fig, f"fig4_temperature_profile_M{len(etas)}", outdir)
 
 
 def plot_beta_history(result: MepResult, outdir: str | Path = "outputs") -> None:

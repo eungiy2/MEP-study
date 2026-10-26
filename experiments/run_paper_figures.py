@@ -56,9 +56,9 @@ def main() -> None:
         print("== stage count sweep (Fig. 4/6) ==")
         results = _run_scenarios(stage_count_scenarios(), outdir)
         plot_cost_vs_stage(results, outdir)
-        # example: temperature profile of the best stage count
-        best = min(results, key=lambda r: r.costs[int(r.probs.argmax())])
-        plot_temperature_profile(best, outdir)
+        # like paper Fig. 4(a)-(d): temperature profile for every stage count
+        for r in results:
+            plot_temperature_profile(r, outdir)
         payload["stage_sweep"] = {
             str(len(r.path)): {
                 "cost": float(r.costs[int(r.probs.argmax())]),

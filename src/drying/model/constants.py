@@ -11,9 +11,9 @@ T_LOW_DEG_C = 30.0
 T_HIGH_DEG_C = 70.0 
 T_STEP_MIN = 2.0
 M_DOT_AIR_CP = 1.0
-W_PENALTY = 1.0
+W_PENALTY = 5.0
     
-K_COEFF = {0: (0.074493, -45.5058, 6839.9),
+K_COEFF = {0: (0.07449, -45.0799, 6846.657),   # HA, refit from Malvandi et al. 2022 (ref [5]); see docs/pseudocode.md erratum
            1: (-0.05811, 39.962, -6680.1)}
 MEQ_COEFFS = {0: (0.2479, -172.09, 30133),
               1: (0.1468, -107.27, 19720)}
