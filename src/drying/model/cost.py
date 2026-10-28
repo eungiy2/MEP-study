@@ -1,4 +1,5 @@
-"""Energy cost, final-moisture penalty, and path cost (Eq. 14-18).
+"""
+Energy cost, final-moisture penalty, and path cost.
 
 Planned public interface: ControlParams, g0, g1, penalty, path_cost
 """

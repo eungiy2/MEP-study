@@ -1,5 +1,4 @@
-"""Path space Omega -- Eq. (1)-(7).
-
+"""
 Planned public interface: HA, HA_US, Path, stage_choices, enumerate_paths
 """
 

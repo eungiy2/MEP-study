@@ -1,15 +1,12 @@
-"""Gibbs weights / free energy -- paper Eq. (25)-(26).
-
-MEP framework (Section III):
-
+"""
 1. Relax the discrete path choice nu(omega) in {0,1} to probability weights
-   p(omega) in [0,1]  (Eq. 21)
+   p(omega) in [0,1]  
 2. Maximizing Shannon entropy H(p) subject to the mean-cost constraint
    Dbar = D0 (Eq. 23) yields the Gibbs distribution as the stationary
    point of the Lagrangian:
-       p(omega) = exp(-beta*D(omega)) / sum_omega' exp(-beta*D(omega'))   (Eq. 25)
+       p(omega) = exp(-beta*D(omega)) / sum_omega' exp(-beta*D(omega'))   
 3. Substituting p back into F gives the minimum free energy:
-       F*(beta) = -(1/beta) * log sum_omega exp(-beta*D(omega))          (Eq. 26)
+       F*(beta) = -(1/beta) * log sum_omega exp(-beta*D(omega))        
                 = sum_omega p(omega)*D(omega) - (1/beta) * H(p)
 """
 

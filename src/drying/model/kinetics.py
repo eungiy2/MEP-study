@@ -1,32 +1,3 @@
-"""Drying kinetics -- Lewis model (Eq. 11-13).
-
-Public interface: K, M_eq, t_star, moisture_update
-
-Temperature-unit reconstruction note
-------------------------------------
-The paper's Eq. (11) annotation says "Tk in Kelvin" for BOTH K0 and K1, but
-numerically that cannot be right:
-
-* K0(T) = (0.074493*T^2 - 45.5058*T + 6839.9)/1000 is NEGATIVE over the whole
-  operating range [30,70] C when T is in Kelvin (it turns positive only above
-  ~70.6 C).  That would make pure hot-air (HA) drying unphysical (moisture
-  would *increase* with time).  The same polynomial is positive and
-  well-behaved over [30,70] C when T is in Celsius, so K0 was evidently
-  fitted with T in Celsius -- a transcription inconsistency in the paper,
-  likely inherited from the HA kinetics reference.
-
-* K1(T) = (-0.05811*T^2 + 39.962*T - 6680.1)/1000 is positive and plausible
-  (K1 ~ 0.09..0.19 1/min) only when T is in Kelvin.
-
-* M0/M1 (Eq. 12) are also sensible only with T in Kelvin (dry-basis
-  equilibrium moisture ~0.02..0.08, decreasing with T), and Eq. (12) divides
-  by 10000 (an earlier draft of this repo mistakenly divided by 1000).
-
-So we adopt the reconstructed convention:  K0 in Celsius, K1 and M_eq in
-Kelvin, M_eq divided by 10000.  All public functions take T in Kelvin (as
-the paper's API suggests); the Celsius conversion happens inside K().
-"""
-
 import numpy as np
 
 from .constants import K_COEFF, MEQ_COEFFS, X0_DRY_INIT
@@ -37,7 +8,7 @@ def K(gamma, T):
 
     T is given in Kelvin.  Internally, gamma == 0 (HA) coefficients are
     evaluated in Celsius (see module docstring for why); gamma == 1 (HA/US)
-    in Kelvin, per Eq. (11).
+    in Kelvin.
     """
     return (K_COEFF[gamma][0] * T ** 2
             + K_COEFF[gamma][1] * T

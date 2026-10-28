@@ -1,12 +1,12 @@
-"""Inner constrained parameter optimization (Eq. 27) -- scipy.optimize wrapper.
+"""Inner constrained parameter optimization -- scipy.optimize wrapper.
 
 The inner problem of Algorithm 1 minimizes the free energy
 
-    F*(beta; eta) = -(1/beta) * log sum_omega exp(-beta * D(omega, eta))   Eq. (26)
+    F*(beta; eta) = -(1/beta) * log sum_omega exp(-beta * D(omega, eta))  
 
 w.r.t. the control parameters eta = (t_1, T_1, ..., t_M, T_M), subject to
 
-    U = {(t, T) : t >= t_0,  T_low <= T <= T_high}                         Eq. (9)
+    U = {(t, T) : t >= t_0,  T_low <= T <= T_high}                         
 
 As a study-mode note: the objective is smooth in eta (once the moisture
 penalty term is accounted for), the variable scale of t (~minutes) and T

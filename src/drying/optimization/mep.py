@@ -1,6 +1,5 @@
-"""Algorithm 1 -- MEP-based combinatorial optimization main loop.
-
-Homotopy strategy (Section III, Algorithm 1):
+"""
+Homotopy strategy
 
 - Start beta at beta_min and multiply it by zeta each iteration.
 - Near beta ~ 0, the entropy term dominates the free energy F*, making it
